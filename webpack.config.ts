@@ -59,20 +59,8 @@ const config: webpack.Configuration = {
         }),
     ],
 
-    resolve: {
-        extensions: [".ts", ".js", ".vue", ".json"],
-        alias: {
-            "vue$": isProduction ? "vue/dist/vue.runtime.min.js" : "vue/dist/vue.runtime.esm.js",
-        }
-    },
-
     module: {
         rules: [
-            {
-                test: /\.vue$/,
-                loader: "vue-loader",
-                options: { },
-            },
             {
                 test: /\.(js|jsx|tsx|ts)$/,
                 exclude: /node_modules/,
@@ -135,16 +123,9 @@ const config: webpack.Configuration = {
                     },
                 ],
             },
-            {
-                test: /.html$/,
-                loader: "vue-template-loader",
-                exclude: /index.html/,
-                options: { },
-            },
         ],
     },
 };
-
 
 export default config;
 if (isProduction) {

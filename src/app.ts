@@ -28,7 +28,7 @@ class LorentzSystem {
             0,
             [1,1,1],
             this.max_t,
-            this.solver.grid(this.dt, function(x, y) {
+            this.solver.grid(this.dt, function(_, y) {
                 that.results.push(y);
             }),
         );
@@ -42,7 +42,7 @@ class LorentzSystem {
     }
 
     private LorentzSystem = function(rho:number, sigma:number, beta:number) {
-        return function(x:any, y:any) {
+        return function(_:any, y:any) {
             return [
                 sigma*(y[1] - y[0]),
                 (y[0]*(rho - y[2])) - y[1],
@@ -72,8 +72,13 @@ class App {
     private lorentzIndex: number = 0;
     private oldPos: number[]|null = null;
 
+    // store what two indices we use for the 2D plot of this 3D system.
+    // x y z mapping to 0, 1, 2.
+    private x_axis: number = 0;
+    private y_axis: number = 2;
+
     constructor() {
-        this.canvas = document.getElementById('canvas');
+        this.canvas = <HTMLCanvasElement>document.getElementById('canvas');
         this.canvas.width = this.width;
         this.canvas.height = this.height;
         this.ctx = this.canvas.getContext('2d');
@@ -97,9 +102,11 @@ class App {
     }
 
     private gameLoop(): void {
-        requestAnimationFrame(this.gameLoop.bind(this));
+        let pos = this.lorentz.results[this.lorentzIndex];
+        this.lorentzIndex = (this.lorentzIndex + 1) % this.lorentz.results.length;
+        this.render(pos);
 
-        this.render();
+        requestAnimationFrame(this.gameLoop.bind(this));
     }
 
     private initCanvas(): void {
@@ -122,12 +129,12 @@ class App {
                 this.offCtx.fillStyle = "#000000";
                 this.offCtx.lineWidth = 0.5;
                 this.offCtx.moveTo(
-                    this.scale(this.oldPos[0], this.canvas.width, false),
-                    this.scale(this.oldPos[2], this.canvas.height, true),
+                    this.scale(this.oldPos[this.x_axis], this.canvas.width, false),
+                    this.scale(this.oldPos[this.y_axis], this.canvas.height, true),
                 );
                 this.offCtx.lineTo(
-                    this.scale(pos[0], this.canvas.width, false),
-                    this.scale(pos[2], this.canvas.height, true),
+                    this.scale(pos[this.x_axis], this.canvas.width, false),
+                    this.scale(pos[this.y_axis], this.canvas.height, true),
                 );
                 this.offCtx.stroke();
             }
@@ -136,6 +143,8 @@ class App {
 
         let image = this.offCtx.getImageData(0, 0, this.offCanvas.width, this.offCanvas.height);
         this.ctx.putImageData(image, 0, 0);
+
+        this.lorentzIndex = Math.floor(Math.random() * this.lorentz.results.length);
     }
 
     private scale(coord: number, axisLength: number, rev: boolean) {
@@ -146,19 +155,15 @@ class App {
         }
     }
 
-    private render(): void {
+    private render(pos: any): void {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         let image = this.offCtx.getImageData(0, 0, this.offCanvas.width, this.offCanvas.height);
         this.ctx.putImageData(image, 0, 0);
-
-        let pos = this.lorentz.results[this.lorentzIndex];
-        this.lorentzIndex = (this.lorentzIndex + 1) % this.lorentz.results.length;
-
         this.ctx.beginPath();
         this.ctx.ellipse(
-            this.scale(pos[0], this.canvas.width, false),
-            this.scale(pos[2], this.canvas.height, true),
+            this.scale(pos[this.x_axis], this.canvas.width, false),
+            this.scale(pos[this.y_axis], this.canvas.height, true),
             5,
             5,
             0,
