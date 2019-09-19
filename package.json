@@ -40,8 +40,8 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/alixnovosi/lorentz"
+        "url": "https://github.com/alixnovosi/lorenz"
     },
     "author": "Andrew Michaud",
-    "license": "ISC"
+    "license": "bsd-3-clause"
 }

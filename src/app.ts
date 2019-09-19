@@ -1,59 +1,13 @@
-import * as odex from "odex";
+import Controls from "./controls";
+import LorentzSystem from "./lorenz";
 
-class LorentzSystem {
-    public rho: number;
-    public sigma: number;
-    public beta: number;
-
-    // time control
-    public max_t: number = 100;
-    public dt: number = 0.01;
-    public t_index: number = 0;
-
-    // positions.
-    public results: any[] = [];
-    private solver: odex.Solver;
-
-    constructor(rho: number, sigma: number, beta: number) {
-        this.rho = rho;
-        this.sigma = sigma;
-        this.beta = beta;
-
-        this.solver = new odex.Solver(3);
-
-        this.solver.denseOutput = true;
-        let that = this;
-        this.solver.solve(
-            this.LorentzSystem(this.rho, this.sigma, this.beta),
-            0,
-            [1,1,1],
-            this.max_t,
-            this.solver.grid(this.dt, function(_, y) {
-                that.results.push(y);
-            }),
-        );
-    }
-
-    public getPos(): number[] {
-        let res =  this.results[this.t_index];
-        this.t_index = (this.t_index + 1) % this.results.length;
-
-        return res;
-    }
-
-    private LorentzSystem = function(rho:number, sigma:number, beta:number) {
-        return function(_:any, y:any) {
-            return [
-                sigma*(y[1] - y[0]),
-                (y[0]*(rho - y[2])) - y[1],
-                (y[0]*y[1]) - (beta*y[2]),
-            ]
-        }
-    }
-}
+import "./styles/main.scss";
 
 class App {
     private lorentz: LorentzSystem;
+
+    private base: HTMLElement;
+    private controls: Controls;
 
     // primary canvas.
     private canvas: HTMLCanvasElement;
@@ -72,26 +26,40 @@ class App {
     private lorentzIndex: number = 0;
     private oldPos: number[]|null = null;
 
+    // lorenz values.
+    private rho: number = 28;
+    private sigma: number = 10;
+    private beta: number = 8.0 / 3.0;
+
     // store what two indices we use for the 2D plot of this 3D system.
     // x y z mapping to 0, 1, 2.
     private x_axis: number = 0;
     private y_axis: number = 2;
 
     constructor() {
-        this.canvas = <HTMLCanvasElement>document.getElementById('canvas');
+        this.base = <HTMLElement>document.getElementById("app");
+
+        this.canvas = <HTMLCanvasElement>document.createElement("canvas");
         this.canvas.width = this.width;
         this.canvas.height = this.height;
-        this.ctx = this.canvas.getContext('2d');
+        this.ctx = this.canvas.getContext("2d");
 
-        this.offCanvas = document.createElement('canvas');
+        this.base.appendChild(this.canvas);
+
+        let div = <HTMLElement>document.createElement("div");
+        div.className = "lorenzControlsBox";
+        this.base.appendChild(div);
+        this.controls = new Controls(div, this.rho, this.sigma, this.beta);
+
+        this.offCanvas = document.createElement("canvas");
         this.offCanvas.width = this.width;
         this.offCanvas.height = this.height;
-        this.offCtx = this.offCanvas.getContext('2d');
+        this.offCtx = this.offCanvas.getContext("2d");
 
         this.lorentz = new LorentzSystem(
-            28,
-            10,
-            8.0 / 3.0,
+            this.rho,
+            this.sigma,
+            this.beta,
         );
     }
 

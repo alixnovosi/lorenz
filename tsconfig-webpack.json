@@ -4,5 +4,8 @@
         "alwaysStrict": true,
         "esModuleInterop": true,
         "module": "commonjs"
-    }
+    },
+    "include": [
+        "./src/**/*.tsx?"
+    ]
 }

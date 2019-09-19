@@ -14,6 +14,11 @@ const config: webpack.Configuration = {
         noInfo: true,
         hot: true,
     },
+
+    resolve: {
+        extensions: [".ts", ".js", ".sass", ".css"],
+    },
+
     entry: "./src/app.ts",
 
     mode: isProduction ? "production": "development",
@@ -68,6 +73,7 @@ const config: webpack.Configuration = {
                     {
                         loader: "babel-loader",
                         options: {
+                            sourceMap: !isProduction,
                             presets: [
                                 [
                                     "@babel/preset-env",
@@ -116,7 +122,6 @@ const config: webpack.Configuration = {
                     {
                         loader: "sass-loader",
                         options: {
-                            outputStyle: "compressed",
                             sourceMap: !isProduction,
                             implementation: sass,
                         },
@@ -129,7 +134,7 @@ const config: webpack.Configuration = {
 
 export default config;
 if (isProduction) {
-    module.exports.devtool = "#source-map";
+    module.exports.devtool = "source-map";
     // http://vue-loader.vuejs.org/en/workflow/production.html
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.LoaderOptionsPlugin({
