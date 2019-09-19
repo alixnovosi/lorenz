@@ -45,6 +45,10 @@ export default class Controls {
     ) {
         this.base = base;
 
+        let titleRowLabel = document.createElement("h4");
+        titleRowLabel.innerHTML = "Axes of 3D system to map";
+        this.base.appendChild(titleRowLabel);
+
         this.xAxis = xAxis;
         this.yAxis = yAxis;
 
@@ -104,31 +108,27 @@ export default class Controls {
             true,
         );
 
-        let paramRow = document.createElement("div");
-        paramRow.className = "lorenzControlRow";
-        this.base.appendChild(paramRow);
-
-        let paramRowLabel = document.createElement("label");
+        let paramRowLabel = document.createElement("h4");
         paramRowLabel.innerHTML = "Lorenz parameters";
-        paramRow.appendChild(paramRowLabel);
+        this.base.appendChild(paramRowLabel);
 
         this.rho = rho;
         let rhoRow = document.createElement("div");
         rhoRow.className = "lorenzControlRow";
         this.base.appendChild(rhoRow);
-        this.rhoInput = new Input(rhoRow, "ρ (rho)", this.rho, this.fieldOnEdit("rho"));
+        this.rhoInput = new Input(rhoRow, "ρ/rho", this.rho, this.fieldOnEdit("rho"));
 
         this.sigma = sigma;
         let sigmaRow = document.createElement("div");
         sigmaRow.className = "lorenzControlRow";
         this.base.appendChild(sigmaRow);
-        this.sigmaInput = new Input(sigmaRow, "σ (sigma)", this.sigma, this.fieldOnEdit("sigma"));
+        this.sigmaInput = new Input(sigmaRow, "σ/sigma", this.sigma, this.fieldOnEdit("sigma"));
 
         this.beta = beta;
         let betaRow = document.createElement("div");
         betaRow.className = "lorenzControlRow";
         this.base.appendChild(betaRow);
-        this.betaInput = new Input(betaRow, "β (beta)", this.beta, this.fieldOnEdit("beta"));
+        this.betaInput = new Input(betaRow, "β/beta", this.beta, this.fieldOnEdit("beta"));
 
         this.reloadButton = document.createElement("button");
         this.base.appendChild(this.reloadButton);

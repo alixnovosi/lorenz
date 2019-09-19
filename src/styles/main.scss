@@ -1,13 +1,26 @@
+$border-color: #000011;
+$button-bg: #BBBBCC;
+$button-hover-bg: #DDDDEE;
+
 #app {
+    align-items: stretch;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     padding: 2em;
+
+    canvas {
+        border: 2px solid $border-color;
+        border-radius: 5px;
+    }
 }
 
 .lorenzControlsBox {
+    border: 1px solid $border-color;
+    border-radius: 5px;
     display: flex;
     flex-direction: column;
+    margin: 0.5em;
     padding: 1em;
 }
 
@@ -16,10 +29,13 @@
     flex-direction: row;
     justify-content: space-between;
     vertical-align: middle;
-    padding: 1em 0;
+    padding: 0.5em 0;
 
     label {
         padding: 0 1em;
+        height: 20px;
+        margin: auto 0;
+        text-align: justify;
     }
 
     div {
@@ -29,4 +45,17 @@
             padding: 0 0.25em;
         }
     }
+}
+
+.reload {
+    background-color: $button-bg;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    margin: 0 auto;
+    max-width: 120px;
+    padding: 0.5em 1em;
+}
+
+.reload:hover {
+    background-color: $button-hover-bg;
 }

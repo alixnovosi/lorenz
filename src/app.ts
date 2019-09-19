@@ -20,8 +20,9 @@ class App {
     private height: number = 500;
     private width: number = 500;
 
-    private borderWidth: number = 2;
     private bgColor: string = "#CCCCFF";
+    private lineColor: string = "#111122";
+    private highlightColor: string = "#EFEFFF";
 
     private lorentzIndex: number = 0;
     private oldPos: number[]|null = null;
@@ -90,12 +91,6 @@ class App {
         this.offCtx.fillStyle = this.bgColor;
         this.offCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.offCtx.lineWidth = `${this.borderWidth}`
-        this.offCtx.fillStyle = "#000000";
-        this.offCtx.rect(
-            this.borderWidth, this.borderWidth,
-            this.canvas.width-(this.borderWidth+1), this.canvas.height-(this.borderWidth+1),
-        );
         this.offCtx.stroke();
 
         // render lorentz to offscreen canvas.
@@ -103,7 +98,7 @@ class App {
         for (let pos of this.lorentz.results) {
             if (i != 0) {
                 this.offCtx.beginPath();
-                this.offCtx.fillStyle = "#000000";
+                this.offCtx.fillStyle = this.lineColor;
                 this.offCtx.lineWidth = 0.5;
                 this.offCtx.moveTo(
                     this.scale(this.oldPos[this.xAxis], this.canvas.width, false),
@@ -127,9 +122,9 @@ class App {
 
     private scale(coord: number, axisLength: number, rev: boolean) {
         if (rev) {
-            return (-8 * coord) + Math.floor(axisLength * 0.8);
+            return (-5 * coord) + Math.floor(axisLength * 0.5);
         }
-        return (8 * coord) + Math.floor(axisLength * 0.5);
+        return (5 * coord) + Math.floor(axisLength * 0.5);
     }
 
     private render(pos: any): void {
@@ -147,7 +142,7 @@ class App {
             0,
             Math.PI * 2,
         );
-        this.ctx.fillStyle = "#FFFFFF";
+        this.ctx.fillStyle = this.highlightColor;
         this.ctx.fill();
         this.ctx.stroke();
     }
