@@ -33,8 +33,8 @@ class App {
 
     // store what two indices we use for the 2D plot of this 3D system.
     // x y z mapping to 0, 1, 2.
-    private x_axis: number = 0;
-    private y_axis: number = 2;
+    private xAxis: number = 0;
+    private yAxis: number = 2;
 
     constructor() {
         this.base = <HTMLElement>document.getElementById("app");
@@ -49,7 +49,15 @@ class App {
         let div = <HTMLElement>document.createElement("div");
         div.className = "lorenzControlsBox";
         this.base.appendChild(div);
-        this.controls = new Controls(div, this.rho, this.sigma, this.beta);
+        this.controls = new Controls(
+            div,
+            this.xAxis,
+            this.yAxis,
+            this.rho,
+            this.sigma,
+            this.beta,
+            this.onReload(),
+            );
 
         this.offCanvas = document.createElement("canvas");
         this.offCanvas.width = this.width;
@@ -91,22 +99,24 @@ class App {
         this.offCtx.stroke();
 
         // render lorentz to offscreen canvas.
+        let i = 0;
         for (let pos of this.lorentz.results) {
-            if (this.oldPos) {
+            if (i != 0) {
                 this.offCtx.beginPath();
                 this.offCtx.fillStyle = "#000000";
                 this.offCtx.lineWidth = 0.5;
                 this.offCtx.moveTo(
-                    this.scale(this.oldPos[this.x_axis], this.canvas.width, false),
-                    this.scale(this.oldPos[this.y_axis], this.canvas.height, true),
+                    this.scale(this.oldPos[this.xAxis], this.canvas.width, false),
+                    this.scale(this.oldPos[this.yAxis], this.canvas.height, true),
                 );
                 this.offCtx.lineTo(
-                    this.scale(pos[this.x_axis], this.canvas.width, false),
-                    this.scale(pos[this.y_axis], this.canvas.height, true),
+                    this.scale(pos[this.xAxis], this.canvas.width, false),
+                    this.scale(pos[this.yAxis], this.canvas.height, true),
                 );
                 this.offCtx.stroke();
             }
             this.oldPos = pos;
+            i++;
         }
 
         let image = this.offCtx.getImageData(0, 0, this.offCanvas.width, this.offCanvas.height);
@@ -117,10 +127,9 @@ class App {
 
     private scale(coord: number, axisLength: number, rev: boolean) {
         if (rev) {
-            return (-5 * coord) + Math.floor(axisLength / 2);
-        } else {
-            return (5 * coord) + Math.floor(axisLength / 2);
+            return (-8 * coord) + Math.floor(axisLength * 0.8);
         }
+        return (8 * coord) + Math.floor(axisLength * 0.5);
     }
 
     private render(pos: any): void {
@@ -130,8 +139,8 @@ class App {
         this.ctx.putImageData(image, 0, 0);
         this.ctx.beginPath();
         this.ctx.ellipse(
-            this.scale(pos[this.x_axis], this.canvas.width, false),
-            this.scale(pos[this.y_axis], this.canvas.height, true),
+            this.scale(pos[this.xAxis], this.canvas.width, false),
+            this.scale(pos[this.yAxis], this.canvas.height, true),
             5,
             5,
             0,
@@ -141,6 +150,27 @@ class App {
         this.ctx.fillStyle = "#FFFFFF";
         this.ctx.fill();
         this.ctx.stroke();
+    }
+
+    public onReload(): (controls: Controls) => () => void {
+        let that: App = this;
+        return (controls: Controls) => {
+            return () => {
+                that.rho = controls.rho;
+                that.sigma = controls.sigma;
+                that.beta = controls.beta;
+
+                that.xAxis = controls.xAxis;
+                that.yAxis = controls.yAxis;
+
+                that.lorentz = new LorentzSystem(
+                    that.rho,
+                    that.sigma,
+                    that.beta,
+                );
+                that.initCanvas();
+            };
+        };
     }
 }
 

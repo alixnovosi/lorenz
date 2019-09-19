@@ -2,7 +2,13 @@ export default class RadioButton {
     public element: HTMLInputElement;
     public label: HTMLLabelElement;
 
-    constructor(base: HTMLElement, rowName: string, value: string, checked: boolean=false) {
+    constructor(
+        base: HTMLElement,
+        rowName: string,
+        value: string,
+        radioOnClick: (axis: string, value: string) => () => void,
+        checked: boolean=false,
+    ) {
         let div = document.createElement("div");
         base.appendChild(div);
 
@@ -12,6 +18,7 @@ export default class RadioButton {
         this.element.name = rowName;
         this.element.value = value;
         this.element.id = value;
+        this.element.addEventListener("click", radioOnClick(rowName, value));
 
         this.label = document.createElement("label");
         this.label.setAttribute("for", this.element.id);
