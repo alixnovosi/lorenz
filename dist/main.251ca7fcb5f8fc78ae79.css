@@ -1,0 +1,1 @@
+#app{display:flex;flex-direction:row;justify-content:space-around;padding:2em}.lorenzControlsBox{display:flex;flex-direction:column;padding:1em}.lorenzControlRow{display:flex;flex-direction:row;justify-content:space-between;vertical-align:middle;padding:1em 0}.lorenzControlRow label{padding:0 1em}.lorenzControlRow div{padding:0 .5em}.lorenzControlRow div label{padding:0 .25em}
