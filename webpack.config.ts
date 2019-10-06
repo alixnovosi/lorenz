@@ -15,6 +15,8 @@ const config: webpack.Configuration = {
         hot: true,
     },
 
+    devtool: isProduction? "source-map": "eval-source-map",
+
     resolve: {
         extensions: [".ts", ".js", ".sass", ".css"],
     },
